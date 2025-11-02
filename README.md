@@ -80,7 +80,7 @@ expense-tracker/
 
 ## Aplikacja online
 Projekt działa publicznie pod adresem:  
-👉 [https://planety-aidana.onrender.com](https://planety-aidana.onrender.com)
+👉 [https://finance-tracker-aidana.onrender.com](https://finance-tracker-aidana.onrender.com)
 
 ---
 

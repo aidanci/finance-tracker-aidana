@@ -1,0 +1,269 @@
+:root {
+  --bg: #153a2b;
+  --card: #1f513b;
+  --accent: #f6f2e7;
+  --accent-light: #fdfbf6;
+  --text: #f6f2e7;
+  --muted: #cfcab8;
+  --border: rgba(255, 255, 255, 0.1);
+  --danger: #d35b44;
+  --radius: 14px;
+  --shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  --transition: all 0.25s ease;
+  --font-main: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  background-color: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+  padding: 2rem;
+  position: relative;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" fill="%23f6f2e7" opacity="0.05"><text x="25" y="100" font-size="60">💵</text><text x="120" y="160" font-size="50">💰</text></svg>');
+  background-repeat: repeat;
+  background-size: 220px 220px;
+}
+
+.app-header {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.app-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.2rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 1px;
+  border: 2px solid var(--accent);
+  display: inline-block;
+  padding: 1.2rem 2.4rem;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.05);
+  box-shadow: var(--shadow);
+  text-transform: capitalize;
+}
+
+.app-header .subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  margin-top: 0.6rem;
+  color: var;
+  font-size: 1.7rem;
+  letter-spacing: 0.3px;
+  font-weight: 400;
+}
+
+<div class="emoji-banner">
+  💰 💵 💸 💲 💰 💵 💸 💲 💰 💵 💸 💲
+</div>
+
+.emoji-banner {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.emoji-banner span, .emoji-banner {
+  font-size: 1.8rem;
+  animation: floatEmojis 12s ease-in-out infinite;
+}
+
+.emoji-banner span:nth-child(odd) {
+  font-size: 1.5rem;
+  opacity: 0.9;
+}
+
+.emoji-banner span:nth-child(3n) {
+  font-size: 2.2rem;
+  opacity: 0.7;
+}
+
+.emoji-banner span:nth-child(4n) {
+  font-size: 1.8rem;
+  opacity: 0.8;
+}
+
+@keyframes floatEmojis {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+h1 {
+  text-align: center;
+  width: fit-content;
+  margin: 2rem auto;
+  padding: 1.2rem 2.4rem;
+  font-size: 2.6rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  margin: 2rem auto;
+  max-width: 900px;
+  transition: var(--transition);
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+h2 {
+  color: var(--accent);
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 1.2rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+input, select {
+  background: #214a37;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  min-width: 140px;
+  transition: var(--transition);
+}
+input:focus, select:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(246,242,231,0.15);
+}
+select {
+  background: #214a37;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  min-width: 160px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(246, 242, 231, 0.15);
+}
+
+select option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+
+button {
+  background-color: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.8rem 1.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.3px;
+}
+button:hover {
+  background-color: var(--accent-light);
+  transform: translateY(-2px);
+}
+button:active { transform: scale(0.98); }
+
+button.danger {
+  background-color: var(--danger);
+  color: #fff;
+}
+button.danger:hover {
+  background-color: #b74c3b;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  color: var(--accent);
+}
+th, td {
+  padding: 1rem 1.2rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+th {
+  background: rgba(255,255,255,0.05);
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+tr:hover td { background: rgba(255,255,255,0.06); }
+
+.totals {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  font-weight: 600;
+}
+.totals div {
+  background: #214a37;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+  color: var(--accent);
+}
+.income { color: var(--accent); }
+.expense { color: var(--danger); }
+
+footer {
+  margin-top: 3rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  background: #1b3e2e;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 1rem;
+  letter-spacing: 0.2px;
+}
+footer span {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  h1 { font-size: 2.2rem; padding: 1rem 1.5rem; }
+  button { width: 100%; }
+  .card { padding: 1.5rem; }
+}

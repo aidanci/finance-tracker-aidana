@@ -2,278 +2,265 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>🌍 Planets CRUD (Flask)</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>💰 Expense & Income Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-  :root {
-    --primary-color: #2b6cb0;
-    --secondary-color: #edf2f7;
-    --text-color: #2d3748;
-    --border-color: #e2e8f0;
-    --hover-bg: #ebf8ff;
-    --radius: 8px;
-  }
-
-  body {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background-color: #fafafa;
-    color: var(--text-color);
-    line-height: 1.6;
-  }
-
-  h1, h2 {
-    color: var(--primary-color);
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  input, button {
-    margin: 0.4rem 0.3rem;
-    padding: 0.5rem 0.8rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-    font-size: 1rem;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.2);
-  }
-
-  button {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 500;
-    transition: background-color 0.2s, transform 0.1s;
-  }
-
-  button:hover {
-    background-color: #2c5282;
-    transform: scale(1.03);
-  }
-
-  button:disabled {
-    background-color: #a0aec0;
-    cursor: not-allowed;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1.2rem;
-    background-color: white;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
-  th, td {
-    border-bottom: 1px solid var(--border-color);
-    padding: 0.7rem 0.6rem;
-    text-align: left;
-  }
-
-  th {
-    background-color: var(--secondary-color);
-    font-weight: 600;
-  }
-
-  tr:hover td {
-    background-color: var(--hover-bg);
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  @media (max-width: 600px) {
+    :root {
+      --bg: #f4f6f8;
+      --card: #fff;
+      --primary: #0066ff;
+      --danger: #e63946;
+      --success: #06d6a0;
+      --text: #222;
+      --muted: #777;
+    }
     body {
-      padding: 1rem;
+      background: var(--bg);
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      color: var(--text);
+    }
+    h1, h2 { text-align: center; color: var(--primary); }
+    button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+    input, select {
+      padding: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin: 0.25rem;
     }
 
-    table, th, td {
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      max-width: 900px;
+      margin: 1rem auto;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 0.6rem;
+      text-align: left;
+    }
+    th { background: #f8f9fa; }
+    td button {
+      margin-right: 0.4rem;
       font-size: 0.9rem;
     }
-
-    input, button {
-      width: 100%;
-      box-sizing: border-box;
+    .totals {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1rem;
+      font-weight: bold;
     }
-  }
-</style>
-
+    .totals div {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 1rem;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+    .income { color: var(--success); }
+    .expense { color: var(--danger); }
+  </style>
 </head>
 <body>
-  <h1>🌍 Planets CRUD</h1>
-  <p><a href="/opis">Opis aplikacji</a></p>
 
-  <h2>Login</h2>
-  <input id="login" placeholder="Login">
-  <input id="password" type="password" placeholder="Password">
-  <button id="btnLogin">Login</button>
-  <button id="btnLogout">Logout</button>
+  <h1>💰 Expense & Income Tracker</h1>
 
-  <div id="content" class="hidden">
-    <h2>Add / Edit Planet</h2>
+  <div class="card" id="loginCard">
+    <h2>Login</h2>
+    <div class="controls">
+      <input id="login" placeholder="Login" />
+      <input id="password" type="password" placeholder="Password" />
+      <button id="btnLogin">Login</button>
+      <button id="btnLogout" style="background:var(--danger)">Logout</button>
+    </div>
+  </div>
+
+  <div class="card" id="appCard" style="display:none;">
+    <h2>Add / Edit Transaction</h2>
     <div class="controls">
       <input id="id" type="hidden">
-      <input id="name" placeholder="Name" required>
-      <input id="system" placeholder="System" required>
-      <input id="climate" placeholder="Climate" required>
-      <input id="population" type="number" placeholder="Population (>=0)" required>
-      <input id="surfaceType" placeholder="Surface type" required>
+      <input id="title" placeholder="Title" required>
+      <input id="category" placeholder="Category" required>
+      <select id="type">
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+      <input id="amount" type="number" step="0.01" placeholder="Amount" required>
+      <input id="date" type="date" required>
       <button id="save">Save</button>
-      <button id="reset" type="button">Reset</button>
+      <button id="reset" type="button" style="background:var(--muted);color:white;">Reset</button>
     </div>
 
-    <h2>All Planets</h2>
-    <table id="tbl">
+    <h2>All Transactions</h2>
+    <table>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>System</th>
-          <th>Climate</th>
-          <th>Population</th>
-          <th>Surface</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Date</th>
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody id="rows"><tr><td colspan="7">Please log in</td></tr></tbody>
+      <tbody id="rows"></tbody>
     </table>
+
+    <div class="totals">
+      <div class="income">Income: <span id="sumIncome">0</span> €</div>
+      <div class="expense">Expense: <span id="sumExpense">0</span> €</div>
+      <div>Balance: <span id="sumBalance">0</span> €</div>
+    </div>
   </div>
 
   <script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const API = "/planets";
-    const qs = s => document.querySelector(s);
-    const F = {
-      id: qs('#id'),
-      name: qs('#name'),
-      system: qs('#system'),
-      climate: qs('#climate'),
-      population: qs('#population'),
-      surfaceType: qs('#surfaceType')
-    };
-    const rows = qs('#rows');
-    const content = qs('#content');
-    let token = localStorage.getItem('token') || '';
+const API = "/transactions";
+let token = localStorage.getItem("token") || "";
 
-    function updateUI(loggedIn) {
-      content.classList.toggle('hidden', !loggedIn);
-    }
+const qs = s => document.querySelector(s);
+const rows = qs("#rows");
+const loginCard = qs("#loginCard");
+const appCard = qs("#appCard");
 
-    updateUI(!!token);
+const F = {
+  id: qs("#id"),
+  title: qs("#title"),
+  category: qs("#category"),
+  type: qs("#type"),
+  amount: qs("#amount"),
+  date: qs("#date")
+};
 
-    // --- LOGIN ---
-    qs('#btnLogin').onclick = async () => {
-      const r = await fetch('/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          login: qs('#login').value,
-          password: qs('#password').value
-        })
-      });
-      const data = await r.json();
-      if (r.ok) {
-        token = data.token;
-        localStorage.setItem('token', token);
-        alert('✅ Logged in!');
-        updateUI(true);
-        list();
-      } else {
-        alert(data.error || 'Login failed');
-      }
-    };
+function updateUI() {
+  const loggedIn = !!token;
+  loginCard.style.display = loggedIn ? "none" : "block";
+  appCard.style.display = loggedIn ? "block" : "none";
+}
 
-    // --- LOGOUT ---
-    qs('#btnLogout').onclick = () => {
-      localStorage.removeItem('token');
-      token = '';
-      updateUI(false);
-      rows.innerHTML = '<tr><td colspan="7">Please log in</td></tr>';
-    };
-
-    // --- LIST ---
-    async function list() {
-      const r = await fetch(API, {
-        headers: { 'Authorization': 'Bearer ' + token }
-      });
-      if (!r.ok) {
-        console.error('Fetch failed', r.status);
-        rows.innerHTML = '<tr><td colspan="7">Error: ' + r.status + '</td></tr>';
-        if (r.status === 401) updateUI(false);
-        return;
-      }
-      const data = await r.json();
-      rows.innerHTML = data.map(p => `
-        <tr>
-          <td>${p.id}</td>
-          <td>${p.name}</td>
-          <td>${p.system}</td>
-          <td>${p.climate}</td>
-          <td>${p.population}</td>
-          <td>${p.surfaceType}</td>
-          <td>
-            <button onclick="editP(${p.id})">Edit</button>
-            <button onclick="delP(${p.id})">Delete</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    // --- EDIT ---
-    window.editP = async (id) => {
-      const r = await fetch(`${API}/${id}`, { headers: { 'Authorization': 'Bearer ' + token } });
-      if (!r.ok) { alert('Planet not found'); return; }
-      const p = await r.json();
-      Object.keys(F).forEach(k => F[k].value = p[k] || '');
-    };
-
-    // --- DELETE ---
-    window.delP = async (id) => {
-      if (!confirm('Delete this planet?')) return;
-      const r = await fetch(`${API}/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': 'Bearer ' + token }
-      });
-      if (r.ok) list(); else alert('Delete failed');
-    };
-
-    // --- SAVE ---
-    qs('#save').onclick = async () => {
-      const body = JSON.stringify({
-        name: F.name.value.trim(),
-        system: F.system.value.trim(),
-        climate: F.climate.value.trim(),
-        population: Number(F.population.value),
-        surfaceType: F.surfaceType.value.trim()
-      });
-      const id = F.id.value;
-      const r = await fetch(id ? `${API}/${id}` : API, {
-        method: id ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body
-      });
-      if (r.ok) { reset(); list(); }
-      else {
-        const e = await r.json();
-        alert(e.error || 'Error occurred');
-      }
-    };
-
-    function reset() {
-      Object.values(F).forEach(i => i.value = '');
-    }
-    qs('#reset').onclick = reset;
-
-    if (token) list();
+qs("#btnLogin").onclick = async () => {
+  const r = await fetch("/auth/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      login: qs("#login").value,
+      password: qs("#password").value
+    })
   });
+  const data = await r.json();
+  if (r.ok) {
+    token = data.token;
+    localStorage.setItem("token", token);
+    alert("✅ Logged in!");
+    updateUI();
+    list();
+  } else alert(data.error || "Login failed");
+};
+
+qs("#btnLogout").onclick = () => {
+  localStorage.removeItem("token");
+  token = "";
+  updateUI();
+};
+
+async function list() {
+  const r = await fetch(API, { headers: { Authorization: "Bearer " + token } });
+  if (!r.ok) {
+    rows.innerHTML = "<tr><td colspan='6'>Please log in</td></tr>";
+    return;
+  }
+  const data = await r.json();
+  let income = 0, expense = 0;
+  rows.innerHTML = data.map(t => {
+    if (t.type === "income") income += t.amount;
+    else expense += t.amount;
+    return `
+      <tr>
+        <td>${t.title}</td>
+        <td>${t.category}</td>
+        <td>${t.type}</td>
+        <td>${t.amount.toFixed(2)}</td>
+        <td>${t.date}</td>
+        <td>
+          <button onclick="editT(${t.id})">✏️</button>
+          <button onclick="delT(${t.id})" style="background:var(--danger)">🗑️</button>
+        </td>
+      </tr>`;
+  }).join("");
+  qs("#sumIncome").textContent = income.toFixed(2);
+  qs("#sumExpense").textContent = expense.toFixed(2);
+  qs("#sumBalance").textContent = (income - expense).toFixed(2);
+}
+
+window.editT = async id => {
+  const r = await fetch(`${API}/${id}`, { headers: { Authorization: "Bearer " + token } });
+  if (!r.ok) return alert("Not found");
+  const t = await r.json();
+  Object.keys(F).forEach(k => F[k].value = t[k]);
+};
+
+window.delT = async id => {
+  if (!confirm("Delete this transaction?")) return;
+  const r = await fetch(`${API}/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: "Bearer " + token }
+  });
+  if (r.ok) list();
+  else alert("Delete failed");
+};
+
+qs("#save").onclick = async () => {
+  const body = JSON.stringify({
+    title: F.title.value.trim(),
+    category: F.category.value.trim(),
+    type: F.type.value,
+    amount: Number(F.amount.value),
+    date: F.date.value
+  });
+  const id = F.id.value;
+  const r = await fetch(id ? `${API}/${id}` : API, {
+    method: id ? "PUT" : "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token
+    },
+    body
+  });
+  if (r.ok) {
+    reset();
+    list();
+  } else {
+    const e = await r.json();
+    alert(e.error || "Error occurred");
+  }
+};
+
+function reset() { Object.values(F).forEach(i => i.value = ""); }
+qs("#reset").onclick = reset;
+
+if (token) { updateUI(); list(); }
   </script>
 </body>
 </html>

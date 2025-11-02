@@ -1,9 +1,9 @@
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 from pathlib import Path
-from werkzeug.security import generate_password_hash  # ✅ Added
-from .database import init_db, get_conn  # ✅ Added get_conn
-from .planets import bp as planets_bp
+from werkzeug.security import generate_password_hash
+from .database import init_db, get_conn
+from .transactions import bp as transactions_bp 
 from .auth import bp as auth_bp
 
 
@@ -21,7 +21,7 @@ def create_app():
     conn.commit()
     conn.close()
 
-    app.register_blueprint(planets_bp)
+    app.register_blueprint(transactions_bp)
     app.register_blueprint(auth_bp)
 
     @app.route("/")
@@ -30,11 +30,11 @@ def create_app():
         if not frontend_path.exists():
             return "<h3>⚠️ index.html not found — check frontend folder</h3>", 404
         return send_from_directory(app.static_folder, "index.html")
-        
+
     @app.route("/opis")
     def opis():
+        """Public info page (no login required)."""
         return send_from_directory(app.static_folder, "about.html")
-
 
     @app.route("/<path:path>")
     def static_proxy(path):

@@ -9,6 +9,7 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -16,7 +17,7 @@ def token_required(f):
         if not token:
             return jsonify({"error": "Missing token"}), 401
         try:
-            token = token.split(" ")[1]  # "Bearer <token>"
+            token = token.split(" ")[1]
             data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
             conn = get_conn()
             user = conn.execute(
@@ -25,6 +26,8 @@ def token_required(f):
             conn.close()
             if not user:
                 return jsonify({"error": "User not found"}), 401
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token expired"}), 401
         except Exception:
             return jsonify({"error": "Invalid token"}), 401
         return f(*args, **kwargs)
@@ -62,6 +65,9 @@ def login():
     data = request.get_json() or {}
     login = data.get("login")
     password = data.get("password")
+
+    if not login or not password:
+        return jsonify({"error": "Missing login or password"}), 400
 
     conn = get_conn()
     user = conn.execute(

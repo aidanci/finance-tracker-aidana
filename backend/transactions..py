@@ -1,114 +1,47 @@
-from flask import Blueprint, request, jsonify
-from .auth import token_required
+from flask import Blueprint, jsonify, request
+from sqlite3 import IntegrityError
 from .database import get_conn
-import datetime
+from .auth import token_required
+from .validators import validate_transaction
 
 bp = Blueprint("transactions", __name__, url_prefix="/transactions")
-
-@bp.post("/")
-@token_required
-def add_transaction():
-    data = request.get_json() or {}
-    title = data.get("title")
-    category = data.get("category")
-    type_ = data.get("type")  # "income" or "expense"
-    amount = data.get("amount")
-    date = data.get("date")
-
-    if not all([title, category, type_, amount, date]):
-        return jsonify({"error": "All fields are required"}), 400
-    if type_ not in ("income", "expense"):
-        return jsonify({"error": "Type must be 'income' or 'expense'"}), 400
-    try:
-        amount = float(amount)
-        if amount <= 0:
-            raise ValueError
-    except ValueError:
-        return jsonify({"error": "Amount must be a positive number"}), 400
-
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO transactions (title, category, type, amount, date)
-        VALUES (?, ?, ?, ?, ?)
-        """,
-        (title, category, type_, amount, date),
-    )
-    conn.commit()
-    conn.close()
-    return jsonify({"message": "Transaction added"}), 201
-
 
 @bp.get("/")
 @token_required
 def list_transactions():
     conn = get_conn()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT id, title, category, type, amount, date FROM transactions ORDER BY date DESC"
-    )
-    rows = [dict(r) for r in cur.fetchall()]
+    rows = conn.execute("SELECT * FROM transactions ORDER BY date DESC").fetchall()
     conn.close()
-    return jsonify(rows), 200
+    return jsonify([dict(r) for r in rows])
 
-
-@bp.get("/<int:transaction_id>")
+@bp.post("/")
 @token_required
-def get_transaction(transaction_id):
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT id, title, category, type, amount, date FROM transactions WHERE id=?",
-        (transaction_id,),
-    )
-    row = cur.fetchone()
-    conn.close()
-    if not row:
-        return jsonify({"error": "Transaction not found"}), 404
-    return jsonify(dict(row)), 200
-
-
-@bp.put("/<int:transaction_id>")
-@token_required
-def update_transaction(transaction_id):
-    data = request.get_json() or {}
-    title = data.get("title")
-    category = data.get("category")
-    type_ = data.get("type")
-    amount = data.get("amount")
-    date = data.get("date")
-
-    if not all([title, category, type_, amount, date]):
-        return jsonify({"error": "All fields are required"}), 400
+def create_transaction():
+    data = request.get_json(silent=True) or {}
+    error = validate_transaction(data)
+    if error:
+        return jsonify({"error": error}), 400
 
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute(
-        """
-        UPDATE transactions
-        SET title=?, category=?, type=?, amount=?, date=?, updated_at=CURRENT_TIMESTAMP
-        WHERE id=?
-        """,
-        (title, category, type_, amount, date, transaction_id),
-    )
+    cur.execute("""
+        INSERT INTO transactions (title, category, type, amount, date)
+        VALUES (?, ?, ?, ?, ?)
+    """, (data["title"], data["category"], data["type"], data["amount"], data["date"]))
     conn.commit()
-    updated = cur.rowcount
+    new_id = cur.lastrowid
     conn.close()
-    if updated == 0:
-        return jsonify({"error": "Transaction not found"}), 404
-    return jsonify({"message": "Transaction updated"}), 200
+    return jsonify({"message": "Transaction added", "id": new_id}), 201
 
-
-@bp.delete("/<int:transaction_id>")
+@bp.delete("/<int:tid>")
 @token_required
-def delete_transaction(transaction_id):
+def delete_transaction(tid: int):
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("DELETE FROM transactions WHERE id=?", (transaction_id,))
+    cur.execute("DELETE FROM transactions WHERE id=?", (tid,))
     conn.commit()
     deleted = cur.rowcount
     conn.close()
     if deleted == 0:
         return jsonify({"error": "Transaction not found"}), 404
-    return jsonify({"message": "Transaction deleted"}), 200
+    return jsonify({"message": "Transaction deleted"})

@@ -2,90 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>💰 Expense & Income Tracker</title>
+  <title>💰 Balancee </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg: #f4f6f8;
-      --card: #fff;
-      --primary: #0066ff;
-      --danger: #e63946;
-      --success: #06d6a0;
-      --text: #222;
-      --muted: #777;
-    }
-    body {
-      background: var(--bg);
-      font-family: system-ui, sans-serif;
-      margin: 0;
-      padding: 2rem;
-      color: var(--text);
-    }
-    h1, h2 { text-align: center; color: var(--primary); }
-    button {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover { opacity: 0.9; }
-    input, select {
-      padding: 0.4rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin: 0.25rem;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 1.5rem;
-      max-width: 900px;
-      margin: 1rem auto;
-    }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border-bottom: 1px solid #eee;
-      padding: 0.6rem;
-      text-align: left;
-    }
-    th { background: #f8f9fa; }
-    td button {
-      margin-right: 0.4rem;
-      font-size: 0.9rem;
-    }
-    .totals {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-    .totals div {
-      background: var(--card);
-      border-radius: 6px;
-      padding: 1rem;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
-    }
-    .income { color: var(--success); }
-    .expense { color: var(--danger); }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
-  <h1>💰 Expense & Income Tracker</h1>
+<div class="app-header">
+  <h1>🌿 BALANCEE</h1>
+  <p class="subtitle">Your Finance Tracker</p>
+</div>
 
   <div class="card" id="loginCard">
     <h2>Login</h2>
@@ -93,7 +21,6 @@
       <input id="login" placeholder="Login" />
       <input id="password" type="password" placeholder="Password" />
       <button id="btnLogin">Login</button>
-      <button id="btnLogout" style="background:var(--danger)">Logout</button>
     </div>
   </div>
 
@@ -102,7 +29,22 @@
     <div class="controls">
       <input id="id" type="hidden">
       <input id="title" placeholder="Title" required>
-      <input id="category" placeholder="Category" required>
+      <select id="category" required>
+  <option value="" disabled selected>Select Category</option>
+  <option value="Salary">💼 Salary</option>
+  <option value="Freelance">💻 Freelance</option>
+  <option value="Investment">📈 Investment</option>
+  <option value="Food">🍽️ Food</option>
+  <option value="Groceries">🛒 Groceries</option>
+  <option value="Rent">🏠 Rent</option>
+  <option value="Utilities">💡 Utilities</option>
+  <option value="Shopping">👜 Shopping</option>
+  <option value="Health">💊 Health</option>
+  <option value="Entertainment">🎬 Entertainment</option>
+  <option value="Travel">✈️ Travel</option>
+  <option value="Education">📚 Education</option>
+  <option value="Other">🌿 Other</option>
+</select>
       <select id="type">
         <option value="income">Income</option>
         <option value="expense">Expense</option>
@@ -111,6 +53,7 @@
       <input id="date" type="date" required>
       <button id="save">Save</button>
       <button id="reset" type="button" style="background:var(--muted);color:white;">Reset</button>
+      <button id="btnLogout" style="background:var(--danger)">Logout</button>
     </div>
 
     <h2>All Transactions</h2>
@@ -135,131 +78,132 @@
     </div>
   </div>
 
+  <footer>
+    <p>Warsaw 2025</p>
+  </footer>
+
   <script>
-const API = "/transactions";
-let token = localStorage.getItem("token") || "";
+    const API = "/transactions";
+    let token = localStorage.getItem("token") || "";
 
-const qs = s => document.querySelector(s);
-const rows = qs("#rows");
-const loginCard = qs("#loginCard");
-const appCard = qs("#appCard");
+    const qs = s => document.querySelector(s);
+    const rows = qs("#rows");
+    const loginCard = qs("#loginCard");
+    const appCard = qs("#appCard");
 
-const F = {
-  id: qs("#id"),
-  title: qs("#title"),
-  category: qs("#category"),
-  type: qs("#type"),
-  amount: qs("#amount"),
-  date: qs("#date")
-};
+    const F = {
+      id: qs("#id"),
+      title: qs("#title"),
+      category: qs("#category"),
+      type: qs("#type"),
+      amount: qs("#amount"),
+      date: qs("#date")
+    };
 
-function updateUI() {
-  const loggedIn = !!token;
-  loginCard.style.display = loggedIn ? "none" : "block";
-  appCard.style.display = loggedIn ? "block" : "none";
-}
+    function updateUI() {
+      const loggedIn = !!token;
+      loginCard.style.display = loggedIn ? "none" : "block";
+      appCard.style.display = loggedIn ? "block" : "none";
+    }
 
-qs("#btnLogin").onclick = async () => {
-  const r = await fetch("/auth/login", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      login: qs("#login").value,
-      password: qs("#password").value
-    })
-  });
-  const data = await r.json();
-  if (r.ok) {
-    token = data.token;
-    localStorage.setItem("token", token);
-    alert("✅ Logged in!");
+    qs("#btnLogin").onclick = async () => {
+      const login = qs("#login").value.trim();
+      const password = qs("#password").value.trim();
+      if (!login || !password) return alert("Enter login and password!");
+
+      if (login === "testuser" && password === "12345") {
+        token = "demo-token";
+        localStorage.setItem("token", token);
+        alert("✅ Logged in!");
+        updateUI();
+        list();
+      } else {
+        alert("❌ Invalid credentials! Try admin / 1234");
+      }
+    };
+
+    qs("#btnLogout").onclick = () => {
+      localStorage.removeItem("token");
+      token = "";
+      updateUI();
+    };
+
+    async function list() {
+      if (!token) return;
+      const data = JSON.parse(localStorage.getItem("transactions") || "[]");
+      let income = 0, expense = 0;
+      rows.innerHTML = data.map((t, i) => {
+        if (t.type === "income") income += t.amount;
+        else expense += t.amount;
+        return `
+          <tr>
+            <td>${t.title}</td>
+            <td>${t.category}</td>
+            <td>${t.type}</td>
+            <td>${t.amount.toFixed(2)}</td>
+            <td>${t.date}</td>
+            <td>
+              <button onclick="editT(${i})">✏️</button>
+              <button onclick="delT(${i})" style="background:var(--danger)">🗑️</button>
+            </td>
+          </tr>`;
+      }).join("");
+      qs("#sumIncome").textContent = income.toFixed(2);
+      qs("#sumExpense").textContent = expense.toFixed(2);
+      qs("#sumBalance").textContent = (income - expense).toFixed(2);
+    }
+
+    window.editT = (i) => {
+      const data = JSON.parse(localStorage.getItem("transactions") || "[]");
+      const t = data[i];
+      Object.keys(F).forEach(k => F[k].value = t[k]);
+      F.id.value = i;
+    };
+
+    window.delT = (i) => {
+      if (!confirm("Delete this transaction?")) return;
+      const data = JSON.parse(localStorage.getItem("transactions") || "[]");
+      data.splice(i, 1);
+      localStorage.setItem("transactions", JSON.stringify(data));
+      list();
+    };
+
+    qs("#save").onclick = () => {
+      const newT = {
+        title: F.title.value.trim(),
+        category: F.category.value.trim(),
+        type: F.type.value,
+        amount: Number(F.amount.value),
+        date: F.date.value
+      };
+      if (!newT.title || !newT.amount || !newT.date) return alert("Please fill all fields");
+      const data = JSON.parse(localStorage.getItem("transactions") || "[]");
+      if (F.id.value) data[F.id.value] = newT;
+      else data.push(newT);
+      localStorage.setItem("transactions", JSON.stringify(data));
+      reset();
+      list();
+    };
+
+    function reset() { Object.values(F).forEach(i => i.value = ""); }
+    qs("#reset").onclick = reset;
+
     updateUI();
-    list();
-  } else alert(data.error || "Login failed");
-};
+    if (token) list();
 
-qs("#btnLogout").onclick = () => {
-  localStorage.removeItem("token");
-  token = "";
-  updateUI();
-};
+const container = document.querySelector('.floating-emojis');
+const emojis = ['💵','💰','💸','💲'];
 
-async function list() {
-  const r = await fetch(API, { headers: { Authorization: "Bearer " + token } });
-  if (!r.ok) {
-    rows.innerHTML = "<tr><td colspan='6'>Please log in</td></tr>";
-    return;
-  }
-  const data = await r.json();
-  let income = 0, expense = 0;
-  rows.innerHTML = data.map(t => {
-    if (t.type === "income") income += t.amount;
-    else expense += t.amount;
-    return `
-      <tr>
-        <td>${t.title}</td>
-        <td>${t.category}</td>
-        <td>${t.type}</td>
-        <td>${t.amount.toFixed(2)}</td>
-        <td>${t.date}</td>
-        <td>
-          <button onclick="editT(${t.id})">✏️</button>
-          <button onclick="delT(${t.id})" style="background:var(--danger)">🗑️</button>
-        </td>
-      </tr>`;
-  }).join("");
-  qs("#sumIncome").textContent = income.toFixed(2);
-  qs("#sumExpense").textContent = expense.toFixed(2);
-  qs("#sumBalance").textContent = (income - expense).toFixed(2);
+for (let i = 0; i < 25; i++) {
+  const emoji = document.createElement('span');
+  emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+  emoji.style.left = Math.random() * 100 + 'vw';
+  emoji.style.fontSize = (Math.random() * 1.4 + 1.4) + 'rem';
+  emoji.style.animationDuration = (8 + Math.random() * 10) + 's';
+  emoji.style.animationDelay = Math.random() * 10 + 's';
+  emoji.style.transform = `rotate(${Math.random() * 360}deg)`;
+  container.appendChild(emoji);
 }
-
-window.editT = async id => {
-  const r = await fetch(`${API}/${id}`, { headers: { Authorization: "Bearer " + token } });
-  if (!r.ok) return alert("Not found");
-  const t = await r.json();
-  Object.keys(F).forEach(k => F[k].value = t[k]);
-};
-
-window.delT = async id => {
-  if (!confirm("Delete this transaction?")) return;
-  const r = await fetch(`${API}/${id}`, {
-    method: "DELETE",
-    headers: { Authorization: "Bearer " + token }
-  });
-  if (r.ok) list();
-  else alert("Delete failed");
-};
-
-qs("#save").onclick = async () => {
-  const body = JSON.stringify({
-    title: F.title.value.trim(),
-    category: F.category.value.trim(),
-    type: F.type.value,
-    amount: Number(F.amount.value),
-    date: F.date.value
-  });
-  const id = F.id.value;
-  const r = await fetch(id ? `${API}/${id}` : API, {
-    method: id ? "PUT" : "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token
-    },
-    body
-  });
-  if (r.ok) {
-    reset();
-    list();
-  } else {
-    const e = await r.json();
-    alert(e.error || "Error occurred");
-  }
-};
-
-function reset() { Object.values(F).forEach(i => i.value = ""); }
-qs("#reset").onclick = reset;
-
-if (token) { updateUI(); list(); }
   </script>
 </body>
 </html>
